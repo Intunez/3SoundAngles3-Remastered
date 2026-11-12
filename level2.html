@@ -371,18 +371,18 @@ window.addEventListener('resize', layoutFit);
 
 /* ---------- Audio: mp3-bestanden voor hints ---------- */
 const hintByType = {
-  corresponding: new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/Overeenkomstig_canon.mp3'),
-  altInterior:  new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/VerwisBinnen_slide_majeur.mp3'),
-  sameInterior: new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/ZelfdeBinnen_stiloverkant_majeur.mp3'),
-  altExterior:  new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/VerwisBuiten_slide_mineur.mp3'),
-  sameExterior: new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/ZelfdeBuiten_stiloverkant_mineur.mp3'),
+  corresponding: new Audio('audio/Overeenkomstig_canon.mp3'),
+  altInterior:  new Audio('audio/VerwisBinnen_slide_majeur.mp3'),
+  sameInterior: new Audio('audio/ZelfdeBinnen_stiloverkant_majeur.mp3'),
+  altExterior:  new Audio('audio/VerwisBuiten_slide_mineur.mp3'),
+  sameExterior: new Audio('audio/ZelfdeBuiten_stiloverkant_mineur.mp3'),
 };
 
 Object.values(hintByType).forEach(a => a.preload = 'auto');
 
 // geluiden bij juist / fout
-const rewardAudio = new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/reward_drumfill.mp3');
-const errorAudio  = new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/error_trombone_wah.mp3');
+const rewardAudio = new Audio('audio/reward_drumfill.mp3');
+const errorAudio  = new Audio('audio/error_trombone_wah.mp3');
 rewardAudio.preload = 'auto';
 errorAudio.preload  = 'auto';
 
@@ -620,7 +620,7 @@ function drawDiagramPair(h1, h2){
   // We tonen enkel de figuur; de vraag zegt welke hoeken bedoeld worden.
   diagEl.innerHTML = `
     <svg viewBox="0 0 441 296" xmlns="http://www.w3.org/2000/svg">
-      <image href="https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/hoeken.png" x="0" y="0" width="441" height="296" />
+      <image href="images/hoeken.png" x="0" y="0" width="441" height="296" />
     </svg>
   `;
 }
