@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Soundangles – Level 2: Soorten hoeken</title>
+
+  <style>
+    :root{
+      --bg1:#1a0b2e; --bg2:#3b0b4e; --panel:#1d1233; --ink:#f8f1ff; --muted:#d7c8ef;
+      --accent:#ff52d9; --accent2:#a855f7; --good:#22c55e; --bad:#ef4444;
+      --speakerGlow: rgba(255,82,217,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Nunito",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,Arial,sans-serif;
+      color:var(--ink);
+      background:radial-gradient(1400px 800px at 70% -10%, var(--bg2) 0%, var(--bg1) 60%);
+    }
+
+    /* Eenvoudige paarse balk bovenaan (zelfde idee als Level 1) */
+    .nav-buttons{
+      display:flex;
+      gap:10px;
+      padding:15px;
+      background:#2e104b;
+      border-bottom:2px solid #ff4fd6;
+      justify-content:center;
+    }
+    .nav-buttons a{
+      color:white;
+      text-decoration:none;
+      font-weight:bold;
+    }
+
+    /* ===== Concert background layers ===== */
+    .bg-layers{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .audience{
+      position:absolute;
+      left:0;
+      right:0;
+      top:0;
+      height:22vh;
+      opacity:1;
+      filter:blur(.4px) contrast(1.1);
+    }
+    .truss-line{
+      position:absolute;left:0;right:0;top:18vh;height:8px;
+      background:repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 6px, transparent 6px 12px);
+      opacity:.35; filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));
+    }
+
+    .beams{
+      position:absolute;
+      inset:0;
+      opacity:.55;
+    }
+    .beams:before,.beams:after{
+      content:"";position:absolute;top:-10%;bottom:-10%;width:28%;
+      background:linear-gradient(90deg, rgba(255,82,217,0), rgba(255,82,217,.45), rgba(255,82,217,0));
+      transform:skewX(-18deg);filter:blur(4px)
+    }
+    .beams:before{left:-20%;animation:beamA 14s linear infinite}
+    .beams:after{left:40%;animation:beamB 18s linear infinite;opacity:.9}
+    @keyframes beamA{0%{transform:translateX(0) skewX(-18deg)}100%{transform:translateX(160%) skewX(-18deg)}}
+    @keyframes beamB{0%{transform:translateX(0) skewX(-18deg)}100%{transform:translateX(-160%) skewX(-18deg)}}
+
+    .smoke{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;mix-blend-mode:screen}
+    .smoke:before{
+      content:"";position:absolute;left:-10%;right:-10%;bottom:-20%;top:40%;
+      background:
+        radial-gradient(120px 80px at 10% 90%, rgba(200,200,220,.14) 0, transparent 60%),
+        radial-gradient(120px 80px at 40% 100%, rgba(200,200,220,.14) 0, transparent 60%),
+        radial-gradient(120px 80px at 70% 85%, rgba(200,200,220,.14) 0, transparent 60%),
+        radial-gradient(120px 80px at 90% 100%, rgba(200,200,220,.14) 0, transparent 60%);
+      filter:blur(12px); animation:smokeUp 18s linear infinite; background-blend-mode:screen
+    }
+    @keyframes smokeUp{0%{transform:translateY(0)}100%{transform:translateY(-40%)}}
+    .smoke.on{opacity:.8}
+    .smoke.major{--smoke: rgba(255,120,220,.18)}
+    .smoke.minor{--smoke: rgba(140,170,255,.18)}
+
+    /* ===== App layout ===== */
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width:980px;
+      margin:160px auto 0;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px
+    }
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    h1{font-size:clamp(22px,2.8vw,34px);margin:0 0 2px 0;letter-spacing:.4px}
+
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:14px 16px;
+      box-shadow:0 12px 30px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:10px
+    }
+    button{
+      appearance:none;border:none;border-radius:18px;padding:10px 14px;font-weight:900;cursor:pointer;
+      background:linear-gradient(180deg,var(--accent),var(--accent2));color:#160824;
+      transition:.15s transform ease,.2s filter ease;font-size:16px
+    }
+    button:hover{filter:brightness(1.06)}
+    button:active{transform:translateY(1px)}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border:1px solid rgba(255,255,255,.14);border-radius:999px;font-size:13px;color:var(--muted);backdrop-filter:blur(3px)}
+
+    .toprow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    #prompt{margin:2px 0 0 0;font-size:22px}
+    .muted{color:var(--muted)} .small{font-size:13px}
+
+    .diagram-wrap{
+      position:relative;border-radius:18px;padding:8px;
+      background:
+        linear-gradient(90deg, rgba(255,82,217,.28), rgba(168,85,247,.28)) padding-box,
+        linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.06)) border-box;
+      border:2px solid transparent;
+    }
+    .diagram{width:100%;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border-radius:14px;position:relative;overflow:hidden}
+    svg{width:100%;height:100%}
+
+    .controls{display:grid;grid-template-columns:1fr;gap:10px;align-items:center}
+    .left-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .options{display:grid;gap:10px;grid-template-columns:1fr}
+    @media (min-width:720px){
+      .options{grid-template-columns:1fr 1fr}
+    }
+    .opt{
+      padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.08);
+      cursor:pointer;font-weight:900;text-align:center;font-size:18px;min-height:56px;
+      display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,.25)
+    }
+    .opt:hover{background:rgba(255,255,255,.12)}
+    .opt.correct{outline:4px solid var(--good);background:rgba(34,197,94,.16)}
+    .opt.wrong{outline:4px solid var(--bad);background:rgba(239,68,68,.14)}
+
+    .hud{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .progress{display:flex;gap:6px;align-items:center}
+    .dot{width:12px;height:12px;border-radius:50%;background:#2a2347;border:1px solid rgba(255,255,255,.18);opacity:.85;transition:transform .2s ease, background .2s ease}
+    .dot.active{background:linear-gradient(180deg,var(--accent),var(--accent2));transform:scale(1.2)}
+    .dot.done{background:#da7df4;opacity:1}
+
+    .fade{animation:fade .3s ease}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    .overlay{position:fixed;inset:0;background:rgba(10,6,18,.88);display:none;align-items:center;justify-content:center;z-index:60}
+    .endbox{background:var(--panel);border:1px solid rgba(255,255,255,.12);padding:22px;border-radius:20px;max-width:520px;text-align:center}
+
+    .speakers{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:80px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      padding:0 28px;
+      z-index:2;
+      pointer-events:none;
+    }
+    .speaker{
+      width:120px;height:200px;border-radius:12px;background:#120a20;
+      border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 38px rgba(0,0,0,.6) inset, 0 10px 28px rgba(0,0,0,.35);
+      position:relative;transform:translateY(0);transition:transform .06s ease;
+    }
+    .speaker:before,.speaker:after{
+      content:"";position:absolute;left:50%;transform:translateX(-50%);border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, #3a2a4d 0 30%, #140b22 31% 100%);
+      box-shadow:0 0 0 5px rgba(255,255,255,.1) inset, 0 2px 6px rgba(0,0,0,.5)
+    }
+    .speaker:before{top:14px;width:88px;height:88px}
+    .speaker:after{bottom:14px;width:76px;height:76px}
+    .speaker.glow{box-shadow:0 14px 38px rgba(0,0,0,.6) inset, 0 0 18px var(--speakerGlow), 0 0 60px rgba(255,82,217,.25)}
+
+    .audience.applause{
+      animation:applauseMove 0.6s ease-out 0s 4 alternate;
+    }
+    @keyframes applauseMove{
+      0%{transform:translateY(0) scaleY(1);}
+      50%{transform:translateY(-6px) scaleY(1.04);}
+      100%{transform:translateY(0) scaleY(1);}
+    }
+
+    @media (max-height:760px){
+      #prompt{font-size:20px}
+      .opt{font-size:17px;min-height:52px}
+    }
+    /* UNIFORME NAVIGATIEBALK (zoals bij Level 1) */
+.nav-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 18px 20px;
+  background: linear-gradient(180deg, #2e104b, #1b0733);
+  border-bottom: 3px solid #ff4fd6;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  position: relative;
+  z-index: 1000;
+}
+
+.nav-buttons a {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  text-decoration: none;
+  background: rgba(12, 0, 32, 0.9);
+  padding: 10px 26px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+  transition: 0.2s ease;
+}
+
+.nav-buttons a:hover {
+  background: #ff4fd6;
+  transform: translateY(-2px) scale(1.04);
+}
+
+  </style>
+<style id="remastered-theme">
+:root{--bg1:#05091d!important;--bg2:#19104b!important;--panel:#101a39!important;--ink:#f8fbff!important;--muted:#c9d9ff!important;--accent:#00d9ff!important;--accent2:#ab4bff!important}
+html{scroll-behavior:smooth}body{background:radial-gradient(ellipse at 50% -10%,#2d1867 0%,#080d2a 48%,#040615 100%) fixed!important;color:#f7faff!important;font-family:Inter,system-ui,Arial,sans-serif!important;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 69px,rgba(0,218,255,.035) 70px),radial-gradient(circle at 15% 30%,rgba(0,200,255,.13),transparent 30%),radial-gradient(circle at 85% 70%,rgba(183,60,255,.16),transparent 35%);animation:arenaGlow 12s ease-in-out infinite alternate}
+@keyframes arenaGlow{from{opacity:.55}to{opacity:1}}
+.nav-buttons{background:rgba(8,13,37,.92)!important;border-color:#b54dff!important;box-shadow:0 5px 25px #7222e744!important;flex-wrap:wrap;gap:8px!important}
+.nav-buttons a{background:#141a40!important;border:1px solid #5965ac66;border-radius:12px!important;padding:10px 15px!important;color:#f6f8ff!important}
+.nav-buttons a:hover,.nav-buttons a:focus-visible{background:#243e78!important;box-shadow:0 0 20px #00d9ff66;transform:translateY(-2px)}
+h1{color:#fff!important;text-shadow:0 0 20px #ae46ff88,0 0 34px #00d9ff55!important;letter-spacing:.02em!important}
+.card,.panel,.board-wrapper,.endbox{background:linear-gradient(145deg,rgba(20,34,78,.94),rgba(19,10,49,.95))!important;border:1px solid #5b8cf577!important;box-shadow:0 16px 50px #0009,0 0 25px #8548ff22!important;border-radius:22px!important}
+button,.btn,.answer-btn,.opt-main,.opt-extra{transition:transform .18s ease,filter .18s ease,box-shadow .18s ease!important}
+button:not(:disabled):hover,.btn:hover,.answer-btn:hover,.opt-main:hover,.opt-extra:hover{filter:brightness(1.16);transform:translateY(-2px);box-shadow:0 0 22px #00d9ff55!important}
+button:focus-visible,a:focus-visible{outline:3px solid #00e5ff;outline-offset:3px}
+button,.answer-btn{min-height:44px}
+.board,.diagram,.diagram-wrap{box-shadow:inset 0 0 30px #00d9ff18!important}
+.feedback{font-weight:700}
+@media(max-width:680px){.nav-buttons{padding:8px!important}.nav-buttons a{font-size:13px!important;padding:9px!important}.page,.wrap{padding-left:12px!important;padding-right:12px!important}.bottom-panel,.qa-row{gap:12px!important}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style></head>
+<body>
+
+  <!-- Navigatiebalk -->
+  <div class="nav-buttons">
+  <a href="home.html">Home</a>
+  <a href="intro.html">Intro</a>
+  <a href="level1.html">Level 1</a>
+  <a href="level2.html">Level 2</a>
+  <a href="level3.html">Level 3</a>
+</div>
+
+
+  <div class="bg-layers">
+    <svg class="audience" viewBox="0 0 1200 240" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,200
+               C50,190 80,170 110,175
+               C140,180 165,165 190,168
+               C215,171 235,160 260,166
+               C285,172 310,162 340,168
+               C370,174 395,160 420,165
+               C445,170 475,158 505,166
+               C535,174 560,160 585,165
+               C610,170 640,158 670,165
+               C700,172 725,160 755,164
+               C785,168 815,158 845,164
+               C875,170 900,160 930,166
+               C960,172 985,160 1015,166
+               C1045,172 1080,162 1120,170
+               L1200,180 L1200,240 L0,240 Z"
+            fill="#05050b"/>
+      <g fill="#101018" opacity="0.9">
+        <circle cx="90" cy="180" r="10"/><circle cx="115" cy="176" r="12"/>
+        <circle cx="210" cy="172" r="11"/><circle cx="238" cy="168" r="10"/>
+        <circle cx="330" cy="170" r="12"/><circle cx="360" cy="168" r="10"/>
+        <circle cx="470" cy="168" r="11"/><circle cx="498" cy="166" r="10"/>
+        <circle cx="610" cy="168" r="11"/><circle cx="640" cy="166" r="10"/>
+        <circle cx="760" cy="166" r="11"/><circle cx="790" cy="164" r="10"/>
+        <circle cx="910" cy="166" r="11"/><circle cx="940" cy="164" r="10"/>
+        <circle cx="1060" cy="168" r="11"/><circle cx="1090" cy="166" r="10"/>
+      </g>
+      <rect x="0" y="0" width="1200" height="240" fill="url(#fade)" opacity=".55"/>
+      <defs>
+        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a1a24"/>
+          <stop offset="40%" stop-color="#1a1a24" stop-opacity=".6"/>
+          <stop offset="100%" stop-color="#1a1a2400" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="truss-line"></div>
+    <div class="beams"></div>
+    <div class="smoke" id="smoke"></div>
+  </div>
+
+  <div class="speakers">
+    <div class="speaker" id="spLeft"></div>
+    <div class="speaker" id="spRight"></div>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <h1>LEVEL 2 — Soorten hoeken</h1>
+      <div class="hud">
+        <div class="progress" id="progress"></div>
+        <span class="pill">Vraag <strong id="round">1</strong>/<strong id="total">0</strong></span>
+        <span class="pill">Score <strong id="score">0</strong></span>
+        <button id="reset">Herstart level</button>
+      </div>
+    </header>
+
+    <section class="panel fade" id="panel">
+      <div class="toprow">
+        <div>
+          <h2 id="prompt">…</h2>
+          <div class="muted small">
+            Luister naar de muziek en kijk naar de twee opgelichte hoeken.
+            <br />Welke soort hoeken zijn het?
+          </div>
+        </div>
+        <button id="next">Volgende vraag</button>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram" id="diagram"></div>
+      </div>
+
+      <div class="controls">
+        <div class="left-controls">
+          <button id="listen">🎵 Nog eens luisteren</button>
+          <button id="stopAudio">⏹ Stop muziek</button>
+        </div>
+        <div class="options" id="options"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="overlay" id="end">
+    <div class="endbox">
+      <h2 style="margin:0 0 6px 0">Level completed!</h2>
+      <p class="muted" id="finalScore">Je score: 0/0</p>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+        <button id="again">Speel level 2 opnieuw</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ---------- Layout Fit ---------- */
+function layoutFit(){
+  const header = document.querySelector('header');
+  const diagram = document.getElementById('diagram');
+  const controls = document.querySelector('.controls');
+  const toprow = document.querySelector('.toprow');
+  const vh = window.innerHeight;
+  const reserved = header.offsetHeight + toprow.offsetHeight + controls.offsetHeight + 80;
+  let max = vh - reserved;
+  if(max < 220) max = 220;
+  diagram.style.height = max + 'px';
+  diagram.style.aspectRatio = 'unset';
+}
+window.addEventListener('resize', layoutFit);
+
+/* ---------- Audio: mp3-bestanden voor hints ---------- */
+const hintByType = {
+  corresponding: new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/Overeenkomstig_canon.mp3'),
+  altInterior:  new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/VerwisBinnen_slide_majeur.mp3'),
+  sameInterior: new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/ZelfdeBinnen_stiloverkant_majeur.mp3'),
+  altExterior:  new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/VerwisBuiten_slide_mineur.mp3'),
+  sameExterior: new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/ZelfdeBuiten_stiloverkant_mineur.mp3'),
+};
+
+Object.values(hintByType).forEach(a => a.preload = 'auto');
+
+// geluiden bij juist / fout
+const rewardAudio = new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/reward_drumfill.mp3');
+const errorAudio  = new Audio('https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/error_trombone_wah.mp3');
+rewardAudio.preload = 'auto';
+errorAudio.preload  = 'auto';
+
+let currentHint = null;
+function stopCurrentHint(){
+  if(currentHint){
+    currentHint.pause();
+    currentHint.currentTime = 0;
+    currentHint = null;
+  }
+}
+
+/* ---------- Speaker & rook ---------- */
+const spL = document.getElementById('spLeft');
+const spR = document.getElementById('spRight');
+const audienceEl = document.querySelector('.audience');
+const smokeEl = document.getElementById('smoke');
+
+function speakerOn(){
+  spL.classList.add('glow');
+  spR.classList.add('glow');
+}
+function speakerOff(){
+  spL.classList.remove('glow');
+  spR.classList.remove('glow');
+}
+function smokeOn(kind){
+  smokeEl.classList.remove('major','minor');
+  if(kind) smokeEl.classList.add(kind);
+  smokeEl.classList.add('on');
+}
+function smokeOff(){ smokeEl.classList.remove('on'); }
+
+function audienceApplause(){
+  if(!audienceEl) return;
+  audienceEl.classList.add('applause');
+  setTimeout(()=>audienceEl.classList.remove('applause'), 1800);
+}
+
+/* ---------- Hoekgegevens ---------- */
+const QUESTIONS = [
+  // overeenkomstig
+  {a:'A1', b:'B1', type:'corresponding'},
+  {a:'A2', b:'B4', type:'altExterior'},
+  {a:'A3', b:'B3', type:'corresponding'},
+  {a:'A4', b:'B4', type:'corresponding'},
+  {a:'A4', b:'B2', type:'altInterior'},
+  {a:'A1', b:'B3', type:'altExterior'},
+  {a:'A4', b:'B1', type:'sameInterior'},
+  {a:'A3', b:'B2', type:'sameInterior'},
+  {a:'A1', b:'B3', type:'altExterior'},
+  {a:'A4', b:'B2', type:'altInterior'},
+  {a:'A1', b:'B4', type:'sameExterior'},
+  {a:'A3', b:'B1', type:'altInterior'},
+];
+
+const TOTAL = QUESTIONS.length;
+
+/* ---------- Antwoordopties ---------- */
+const OPTION_TYPES = [
+  {
+    id:'corresponding',
+    label:'Overeenkomstige hoeken'
+  },
+  {
+    id:'altInterior',
+    label:'Verwisselende binnenhoeken'
+  },
+  {
+    id:'sameInterior',
+    label:'Binnenhoeken aan dezelfde kant van de snijlijn'
+  },
+  {
+    id:'altExterior',
+    label:'Verwisselende buitenhoeken'
+  },
+  {
+    id:'sameExterior',
+    label:'Buitenhoeken aan dezelfde kant van de snijlijn'
+  }
+];
+
+/* ---------- Game state ---------- */
+let order = [];
+let state = {index:0, score:0, locked:false, finished:false};
+
+const progressEl = document.getElementById('progress');
+const promptEl   = document.getElementById('prompt');
+const optionsEl  = document.getElementById('options');
+const scoreEl    = document.getElementById('score');
+const roundEl    = document.getElementById('round');
+const totalEl    = document.getElementById('total');
+const diagEl     = document.getElementById('diagram');
+
+totalEl.textContent = TOTAL;
+
+for(let i=1;i<=TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='dot'+(i===1?' active':'');
+  d.id='dot'+i;
+  progressEl.appendChild(d);
+}
+
+/* ---------- Event listeners ---------- */
+document.getElementById('next').addEventListener('click', ()=>{
+  if(state.finished || !state.locked) return;
+  state.index++;
+  if(state.index >= TOTAL){ finish(); }
+  else{ newQuestion(); }
+});
+document.getElementById('reset').addEventListener('click', ()=>resetGame());
+document.getElementById('listen').addEventListener('click', ()=>playCurrentHint());
+document.getElementById('stopAudio').addEventListener('click', ()=>{
+  stopCurrentHint();
+  speakerOff();
+  smokeOff();
+});
+document.getElementById('again').addEventListener('click', ()=>{
+  document.getElementById('end').style.display='none';
+  resetGame();
+});
+
+/* ---------- Game functions ---------- */
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random()* (i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function resetGame(){
+  order = shuffle([...Array(TOTAL).keys()]);
+  state = {index:0,score:0,locked:false,finished:false};
+  scoreEl.textContent = 0;
+  roundEl.textContent = 1;
+  updateDots();
+  stopCurrentHint();
+  speakerOff();
+  smokeOff();
+  newQuestion();
+}
+
+function updateDots(){
+  for(let i=0;i<TOTAL;i++){
+    const d=document.getElementById('dot'+(i+1));
+    d.classList.remove('active','done');
+    if(i < state.index) d.classList.add('done');
+    if(i === state.index) d.classList.add('active');
+  }
+}
+
+function newQuestion(){
+  state.locked = false;
+  optionsEl.innerHTML = '';
+  stopCurrentHint();
+  speakerOff();
+  smokeOff();
+
+  const q = QUESTIONS[order[state.index]];
+  state.current = q;
+
+  promptEl.textContent = `Welke soort hoeken zijn ∠${q.a} en ∠${q.b}?`;
+  roundEl.textContent = state.index + 1;
+  drawDiagramPair(q.a, q.b);
+  buildOptions();
+  updateDots();
+  layoutFit();
+
+  // hint automatisch starten
+  setTimeout(()=>playCurrentHint(), 200);
+}
+
+function buildOptions(){
+  OPTION_TYPES.forEach(opt =>{
+    const btn = document.createElement('div');
+    btn.className='opt';
+    btn.textContent = opt.label;
+    btn.onclick = (ev)=>select(opt.id, ev);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function select(chosenType, ev){
+  if(state.locked || state.finished) return;
+  state.locked = true;
+
+  const q = state.current;
+  const correctType = q.type;
+
+  const nodes=[...document.querySelectorAll('.opt')];
+  nodes.forEach(n=>{
+    const typeForNode = OPTION_TYPES.find(o => o.label === n.textContent).id;
+    const ok = (typeForNode === correctType);
+    n.classList.toggle('correct', ok);
+    if(!ok && n === ev.currentTarget) n.classList.add('wrong');
+  });
+
+  stopCurrentHint(); // muziek stopt bij antwoord
+
+  if(chosenType === correctType){
+    state.score++;
+    scoreEl.textContent = state.score;
+    rewardAudio.currentTime = 0;
+    rewardAudio.play().catch(()=>{});
+    audienceApplause();
+  } else {
+    errorAudio.currentTime = 0;
+    errorAudio.play().catch(()=>{});
+  }
+
+  if(state.index === TOTAL - 1){
+    setTimeout(()=>finish(), 900);
+  }
+}
+
+/* ---------- Hint afspelen ---------- */
+function playCurrentHint(){
+  const q = state.current;
+  if(!q) return;
+  const clip = hintByType[q.type];
+  if(!clip) return;
+  stopCurrentHint();
+  currentHint = clip;
+  clip.currentTime = 0;
+  clip.play().catch(()=>{});
+  speakerOn();
+  const isInside = (q.type === 'altInterior' || q.type === 'sameInterior');
+  smokeOn(isInside ? 'major' : 'minor');
+  setTimeout(()=>{ speakerOff(); smokeOff(); }, 8500);
+}
+
+/* ---------- Diagram: alleen de figuur, geen markeringen ---------- */
+function drawDiagramPair(h1, h2){
+  // We tonen enkel de figuur; de vraag zegt welke hoeken bedoeld worden.
+  diagEl.innerHTML = `
+    <svg viewBox="0 0 441 296" xmlns="http://www.w3.org/2000/svg">
+      <image href="https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/hoeken.png" x="0" y="0" width="441" height="296" />
+    </svg>
+  `;
+}
+
+/* ---------- Einde van het level ---------- */
+function finish(){
+  if(state.finished) return;
+  state.finished = true;
+  stopCurrentHint();
+  speakerOff();
+  smokeOff();
+  document.getElementById('finalScore').textContent =
+    `Je score: ${state.score}/${TOTAL}`;
+  document.getElementById('end').style.display = 'flex';
+}
+
+/* Start */
+layoutFit();
+resetGame();
+</script>
+</body>
+</html>
