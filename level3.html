@@ -849,6 +849,7 @@ button,.answer-btn{min-height:44px}
   }
 
   function renderExtraQuestion(){
+    extraAnswerPending = false;
     const q = state.current.extra.questions[state.extraIndex];
     extraContainer.style.display = "block";
     extraQuestionEl.textContent = q.text;
@@ -864,14 +865,17 @@ button,.answer-btn{min-height:44px}
     });
   }
 
+  let extraAnswerPending = false;
   function handleExtraAnswer(chosenValue, btnNode){
-    if(!state.extraOpen || state.finished) return;
+    if(!state.extraOpen || state.finished || extraAnswerPending) return;
+    extraAnswerPending = true;
 
     const q = state.current.extra.questions[state.extraIndex];
     const correctValue = q.correct;
 
     const all = [...document.querySelectorAll('.opt-extra')];
     all.forEach(n=>{
+      n.style.pointerEvents = "none";
       const val = n.dataset.value;
       const isCorrect = (val === correctValue);
       n.classList.toggle('correct', isCorrect);
