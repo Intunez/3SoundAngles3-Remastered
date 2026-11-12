@@ -435,8 +435,8 @@ button,.answer-btn{min-height:44px}
   const QUESTIONS = [
     // 1–3: driehoeken → som = 180° + bonus: soort driehoek
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/scherphoekige_driehoek.png",
-      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/sabre_dance_level3.mp3",
+      img: "images/scherphoekige_driehoek.png",
+      audio: "audio/sabre_dance_level3.mp3",
       type: "triangle",
       correctTypes: ["triangle"],
       extra: {
@@ -454,8 +454,8 @@ button,.answer-btn{min-height:44px}
       }
     },
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/stomphoekige_driehoek.png",
-      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/lean_on_me_level3.mp3",
+      img: "images/stomphoekige_driehoek.png",
+      audio: "audio/lean_on_me_level3.mp3",
       type: "triangle",
       correctTypes: ["triangle"],
       extra: {
@@ -473,8 +473,8 @@ button,.answer-btn{min-height:44px}
       }
     },
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/rechthoekige_driehoek.png",
-      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/mars_militaire.mp3",
+      img: "images/rechthoekige_driehoek.png",
+      audio: "audio/mars_militaire.mp3",
       type: "triangle",
       correctTypes: ["triangle"],
       extra: {
@@ -494,19 +494,19 @@ button,.answer-btn{min-height:44px}
 
     // 4–6: vierhoeken → som = 360° ÉN (n-2).180° (twee juiste antwoorden)
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/vierhoek_1.png",
+      img: "images/vierhoek_1.png",
       audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/vierhoek_level3.mp3",
       type: "quadrilateral",
       correctTypes: ["quadrilateral", "polygon"]
     },
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/vierhoek_2.png",
+      img: "images/vierhoek_2.png",
       audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/vierhoek_level3.mp3",
       type: "quadrilateral",
       correctTypes: ["quadrilateral", "polygon"]
     },
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/vierhoek_3.png",
+      img: "images/vierhoek_3.png",
       audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/vierhoek_level3.mp3",
       type: "quadrilateral",
       correctTypes: ["quadrilateral", "polygon"]
@@ -514,16 +514,16 @@ button,.answer-btn{min-height:44px}
 
     // 7: veelhoek_1 – jij wil die ook als “vierhoek-achtig” behandelen → 360° EN formule
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/veelhoek_1.png",
-      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/veelhoek_level3.mp3",
+      img: "images/veelhoek_1.png",
+      audio: "audio/veelhoek_level3.mp3",
       type: "quadrilateral",
       correctTypes: ["quadrilateral", "polygon"]
     },
 
     // 8–10: veelhoeken → één juist antwoord + extra deelvragen
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/veelhoek_2.png",
-      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/veelhoek_level3.mp3",
+      img: "images/veelhoek_2.png",
+      audio: "audio/veelhoek_level3.mp3",
       type: "polygon",
       correctTypes: ["polygon"],
       extra: {
@@ -542,8 +542,8 @@ button,.answer-btn{min-height:44px}
       }
     },
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/veelhoek_3.png",
-      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/veelhoek_level3.mp3",
+      img: "images/veelhoek_3.png",
+      audio: "audio/veelhoek_level3.mp3",
       type: "polygon",
       correctTypes: ["polygon"],
       extra: {
@@ -562,8 +562,8 @@ button,.answer-btn{min-height:44px}
       }
     },
     {
-      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/veelhoek_4.png",
-      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/veelhoek_level3.mp3",
+      img: "images/veelhoek_4.png",
+      audio: "audio/veelhoek_level3.mp3",
       type: "polygon",
       correctTypes: ["polygon"],
       extra: {
@@ -629,8 +629,8 @@ button,.answer-btn{min-height:44px}
 
   let currentAudio = null;
 
-  const goodSound = new Audio("https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/reward_drumfill.mp3");
-  const badSound  = new Audio("https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/error_trombone_wah.mp3");
+  const goodSound = new Audio("audio/reward_drumfill.mp3");
+  const badSound  = new Audio("audio/error_trombone_wah.mp3");
   goodSound.preload = "auto";
   badSound.preload  = "auto";
 
