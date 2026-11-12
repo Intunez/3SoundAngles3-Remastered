@@ -246,7 +246,7 @@ button,.answer-btn{min-height:44px}
 .feedback{font-weight:700}
 @media(max-width:680px){.nav-buttons{padding:8px!important}.nav-buttons a{font-size:13px!important;padding:9px!important}.page,.wrap{padding-left:12px!important;padding-right:12px!important}.bottom-panel,.qa-row{gap:12px!important}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-</style></head>
+</style><style id="remastered-options">button.opt{font:inherit;color:inherit;cursor:pointer;text-align:left}button.opt:disabled{cursor:default;opacity:1}#remastered-explanation{padding:12px 18px;border:1px solid #60eaff88;border-radius:14px;background:#061b39e8;color:#f0faff;font-size:clamp(14px,1.7vw,18px);line-height:1.4}</style></head>
 <body>
 
   <!-- Navigatiebalk -->
@@ -538,6 +538,8 @@ function updateDots(){
 function newQuestion(){
   state.locked = false;
   optionsEl.innerHTML = '';
+  const oldExplanation=document.getElementById('remastered-explanation');
+  if(oldExplanation) oldExplanation.remove();
   stopCurrentHint();
   speakerOff();
   smokeOff();
@@ -557,8 +559,9 @@ function newQuestion(){
 }
 
 function buildOptions(){
-  OPTION_TYPES.forEach(opt =>{
-    const btn = document.createElement('div');
+  shuffle([...OPTION_TYPES]).forEach(opt =>{
+    const btn = document.createElement('button');
+    btn.type='button';
     btn.className='opt';
     btn.textContent = opt.label;
     btn.onclick = (ev)=>select(opt.id, ev);
@@ -574,6 +577,7 @@ function select(chosenType, ev){
   const correctType = q.type;
 
   const nodes=[...document.querySelectorAll('.opt')];
+  nodes.forEach(n => n.disabled = true);
   nodes.forEach(n=>{
     const typeForNode = OPTION_TYPES.find(o => o.label === n.textContent).id;
     const ok = (typeForNode === correctType);
@@ -594,8 +598,18 @@ function select(chosenType, ev){
     errorAudio.play().catch(()=>{});
   }
 
+  const explanations = {
+    corresponding:'De hoeken liggen bij verschillende snijpunten op dezelfde positie.',
+    altInterior:'Beide hoeken liggen binnen de lijnen, aan tegenovergestelde kanten van de snijlijn.',
+    sameInterior:'Beide hoeken liggen binnen de lijnen, aan dezelfde kant van de snijlijn.',
+    altExterior:'Beide hoeken liggen buiten de lijnen, aan tegenovergestelde kanten van de snijlijn.',
+    sameExterior:'Beide hoeken liggen buiten de lijnen, aan dezelfde kant van de snijlijn.'
+  };
+  let explanation=document.getElementById('remastered-explanation');
+  if(!explanation){explanation=document.createElement('p');explanation.id='remastered-explanation';explanation.setAttribute('role','status');optionsEl.insertAdjacentElement('afterend',explanation);}
+  explanation.textContent=(chosenType===correctType?'Correct! ':'Bijna! ')+explanations[correctType];
   if(state.index === TOTAL - 1){
-    setTimeout(()=>finish(), 900);
+    setTimeout(()=>finish(), 1300);
   }
 }
 
