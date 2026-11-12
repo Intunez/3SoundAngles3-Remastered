@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Intro – SoundAngles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root{
+      --bg1:#1a0b2e; 
+      --bg2:#3b0b4e; 
+      --panel:#1d1233; 
+      --ink:#f8f1ff; 
+      --muted:#d7c8ef;
+      --accent:#ff52d9; 
+      --accent2:#a855f7; 
+      --good:#22c55e; 
+      --bad:#ef4444;
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    body{
+      margin:0;
+      font-family:"Nunito",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,Arial,sans-serif;
+      color:var(--ink);
+      background:radial-gradient(1400px 800px at 70% -10%, var(--bg2) 0%, var(--bg1) 60%);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+
+    /* NAVIGATIEBALK BOVEN */
+    .nav-buttons {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 18px 20px;
+      background: linear-gradient(180deg, #2e104b, #1b0733);
+      border-bottom: 3px solid #ff4fd6;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+
+    .nav-buttons a {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      text-decoration: none;
+      background: rgba(12, 0, 32, 0.9);
+      padding: 10px 26px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      transition: 0.2s ease;
+    }
+
+    .nav-buttons a:hover {
+      background: #ff4fd6;
+      transform: translateY(-2px) scale(1.04);
+    }
+
+    .nav-buttons a.current{
+      background:#ff4fd6;
+      color:#160824;
+    }
+
+    /* PAGINA-INHOUD */
+    .page{
+      width:100%;
+      max-width:960px;
+      padding:30px 16px 40px;
+    }
+
+    h1{
+      font-size:clamp(26px,3vw,32px);
+      margin-bottom:6px;
+      text-align:center;
+    }
+
+    .subtitle{
+      text-align:center;
+      color:var(--muted);
+      margin-bottom:20px;
+      font-size:14px;
+    }
+
+    /* Knoppen bovenaan om snel naar de juiste intro te scrollen */
+    .intro-nav{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:20px;
+    }
+    .intro-nav button{
+      appearance:none;
+      border:none;
+      border-radius:999px;
+      padding:8px 18px;
+      font-weight:800;
+      cursor:pointer;
+      background:linear-gradient(180deg,var(--accent),var(--accent2));
+      color:#160824;
+      font-size:14px;
+      box-shadow:0 8px 20px rgba(0,0,0,.5);
+      transition:.15s transform ease,.2s filter ease;
+    }
+    .intro-nav button:hover{
+      filter:brightness(1.06);
+      transform:translateY(-1px);
+    }
+
+    /* Blokken met video */
+    .intro-block{
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 16px 40px rgba(0,0,0,.45);
+      padding:20px 18px 22px;
+      margin-bottom:24px;
+      text-align:center;
+    }
+
+    .intro-block h2{
+      margin-bottom:6px;
+      font-size:22px;
+    }
+
+    .intro-block p{
+      margin:0 0 14px 0;
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    video{
+      max-width:100%;
+      width:100%;
+      height:auto;
+      background:#000;
+      border-radius:12px;
+      margin-top:8px;
+    }
+
+    .btn-row{
+      margin-top:14px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .btn-primary{
+      appearance:none;
+      border:none;
+      border-radius:16px;
+      padding:10px 20px;
+      font-weight:800;
+      cursor:pointer;
+      background:#ffffff;
+      color:#160824;
+      font-size:15px;
+      box-shadow:0 8px 20px rgba(0,0,0,.5);
+      transition:.15s transform ease,.2s filter ease;
+    }
+    .btn-primary:hover{
+      background:#e6e6e6;
+      transform:translateY(-1px);
+    }
+
+    @media (max-width:600px){
+      .nav-buttons{
+        flex-wrap:wrap;
+        row-gap:10px;
+      }
+    }
+  </style>
+<style id="remastered-theme">
+:root{--bg1:#05091d!important;--bg2:#19104b!important;--panel:#101a39!important;--ink:#f8fbff!important;--muted:#c9d9ff!important;--accent:#00d9ff!important;--accent2:#ab4bff!important}
+html{scroll-behavior:smooth}body{background:radial-gradient(ellipse at 50% -10%,#2d1867 0%,#080d2a 48%,#040615 100%) fixed!important;color:#f7faff!important;font-family:Inter,system-ui,Arial,sans-serif!important;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 69px,rgba(0,218,255,.035) 70px),radial-gradient(circle at 15% 30%,rgba(0,200,255,.13),transparent 30%),radial-gradient(circle at 85% 70%,rgba(183,60,255,.16),transparent 35%);animation:arenaGlow 12s ease-in-out infinite alternate}
+@keyframes arenaGlow{from{opacity:.55}to{opacity:1}}
+.nav-buttons{background:rgba(8,13,37,.92)!important;border-color:#b54dff!important;box-shadow:0 5px 25px #7222e744!important;flex-wrap:wrap;gap:8px!important}
+.nav-buttons a{background:#141a40!important;border:1px solid #5965ac66;border-radius:12px!important;padding:10px 15px!important;color:#f6f8ff!important}
+.nav-buttons a:hover,.nav-buttons a:focus-visible{background:#243e78!important;box-shadow:0 0 20px #00d9ff66;transform:translateY(-2px)}
+h1{color:#fff!important;text-shadow:0 0 20px #ae46ff88,0 0 34px #00d9ff55!important;letter-spacing:.02em!important}
+.card,.panel,.board-wrapper,.endbox{background:linear-gradient(145deg,rgba(20,34,78,.94),rgba(19,10,49,.95))!important;border:1px solid #5b8cf577!important;box-shadow:0 16px 50px #0009,0 0 25px #8548ff22!important;border-radius:22px!important}
+button,.btn,.answer-btn,.opt-main,.opt-extra{transition:transform .18s ease,filter .18s ease,box-shadow .18s ease!important}
+button:not(:disabled):hover,.btn:hover,.answer-btn:hover,.opt-main:hover,.opt-extra:hover{filter:brightness(1.16);transform:translateY(-2px);box-shadow:0 0 22px #00d9ff55!important}
+button:focus-visible,a:focus-visible{outline:3px solid #00e5ff;outline-offset:3px}
+button,.answer-btn{min-height:44px}
+.board,.diagram,.diagram-wrap{box-shadow:inset 0 0 30px #00d9ff18!important}
+.feedback{font-weight:700}
+@media(max-width:680px){.nav-buttons{padding:8px!important}.nav-buttons a{font-size:13px!important;padding:9px!important}.page,.wrap{padding-left:12px!important;padding-right:12px!important}.bottom-panel,.qa-row{gap:12px!important}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style></head>
+<body>
+
+  <!-- NAVIGATIEBALK -->
+  <div class="nav-buttons">
+    <a href="home.html">Home</a>
+    <a href="intro.html" class="current">Intro</a>
+    <a href="level1.html">Level 1</a>
+    <a href="level2.html">Level 2</a>
+    <a href="level3.html">Level 3</a>
+  </div>
+
+  <div class="page">
+    <h1>Introductie – SoundAngles</h1>
+    <p class="subtitle">
+      Kies welke intro je wilt bekijken: voor level 1 & 2 of voor level 3.
+    </p>
+
+    <!-- Kleine navigatie tussen de twee intro's -->
+    <div class="intro-nav">
+      <button type="button" onclick="document.getElementById('intro12').scrollIntoView({behavior:'smooth'})">
+        Intro Level 1 & 2
+      </button>
+      <button type="button" onclick="document.getElementById('intro3').scrollIntoView({behavior:'smooth'})">
+        Intro Level 3
+      </button>
+    </div>
+
+    <!-- INTRO LEVEL 1 & 2 -->
+    <section class="intro-block" id="intro12">
+      <h2>Intro level 1 & 2</h2>
+      <p>Bekijk eerst deze uitleg over binnen- en buitenhoeken en de soorten hoeken in level 2.</p>
+
+      <video id="introVideo12" src="https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/intro.mp4" controls></video>
+
+      <div class="btn-row">
+        <button id="skipButton12" class="btn-primary">
+          Ga verder naar het spel
+        </button>
+      </div>
+    </section>
+
+    <!-- INTRO LEVEL 3 -->
+    <section class="intro-block" id="intro3">
+      <h2>Intro level 3</h2>
+      <p>In deze intro ontdek je hoe je de som van de hoeken van driehoeken, vierhoeken en veelhoeken kan bepalen.</p>
+
+      <video id="introVideo3" src="https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/intro_level3.mp4" controls></video>
+
+      <div class="btn-row">
+        <button id="skipButton3" class="btn-primary">
+          Ga verder naar level 3
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Intro level 1 & 2
+    const video12 = document.getElementById('introVideo12');
+    const skip12  = document.getElementById('skipButton12');
+
+    video12.addEventListener('ended', () => {
+      // Na de intro: naar het overzicht
+      window.location.href = 'home.html';
+    });
+
+    skip12.addEventListener('click', () => {
+      window.location.href = 'home.html';
+    });
+
+    // Intro level 3
+    const video3 = document.getElementById('introVideo3');
+    const skip3  = document.getElementById('skipButton3');
+
+    video3.addEventListener('ended', () => {
+      // Na de level 3-intro meteen naar level 3
+      window.location.href = 'level3.html';
+    });
+
+    skip3.addEventListener('click', () => {
+      window.location.href = 'level3.html';
+    });
+  </script>
+
+</body>
+</html>
