@@ -335,7 +335,7 @@ button,.answer-btn{min-height:44px}
       const list = type === "binnen" ? binnenSources : buitenSources;
       const index = Math.floor(Math.random() * list.length);
       currentHint = new Audio(list[index]);
-      currentHint.play();
+      currentHint.play().catch(() => { feedbackText.textContent = "Tik op Nog eens luisteren om de muziek te starten."; });
     }
 
     /* =======================
@@ -356,6 +356,7 @@ button,.answer-btn{min-height:44px}
       { angle: "B2", correct: "binnen" }
     ];
 
+    let finishTimer = null;
     let currentIndex = 0;
     let score = 0;
     let answered = false;
@@ -375,6 +376,7 @@ button,.answer-btn{min-height:44px}
     function showQuestion(index) {
       const q = questions[index];
       answered = false;
+      if (finishTimer) { clearTimeout(finishTimer); finishTimer = null; }
 
       // reset knoppen
       btnBinnen.classList.remove("correct", "wrong");
@@ -413,7 +415,7 @@ button,.answer-btn{min-height:44px}
         }
       } else {
         feedbackText.textContent =
-          "Niet helemaal. Dit is een " + correct + "hoek.";
+          "Niet helemaal. Dit is een " + correct + "hoek. Kijk naar de positie van de hoek tussen of buiten de twee lijnen.";
         if (answer === "binnen") {
           btnBinnen.classList.add("wrong");
         } else {
@@ -430,7 +432,7 @@ button,.answer-btn{min-height:44px}
         // Laatste vraag: knop uitzetten en automatisch naar level 2
         nextBtn.disabled = true;
         questionText.textContent += " (Laatste vraag)";
-        setTimeout(() => finishLevel1(), 2000);  // 2 seconden wachten
+        finishTimer = setTimeout(() => finishLevel1(), 2000);  // 2 seconden wachten
       }
     }
 
@@ -445,6 +447,7 @@ button,.answer-btn{min-height:44px}
     });
 
     restartBtn.addEventListener("click", () => {
+      if (finishTimer) { clearTimeout(finishTimer); finishTimer = null; }
       currentIndex = 0;
       score = 0;
       stopCurrentHint();
