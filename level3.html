@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Soundangles – Level 3: Hoeksommen</title>
+
+  <style>
+    :root{
+      --bg1:#1a0b2e; 
+      --bg2:#3b0b4e; 
+      --panel:#1d1233; 
+      --ink:#f8f1ff; 
+      --muted:#d7c8ef;
+      --accent:#ff52d9; 
+      --accent2:#a855f7; 
+      --good:#22c55e; 
+      --bad:#ef4444;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+
+    body{
+      margin:0;
+      font-family:"Nunito",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,Arial,sans-serif;
+      color:var(--ink);
+      background:radial-gradient(1400px 800px at 70% -10%, var(--bg2) 0%, var(--bg1) 60%);
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* NAVIGATIEBALK BOVENAAN */
+    .nav-buttons {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 18px 20px;
+      background: linear-gradient(180deg, #2e104b, #1b0733);
+      border-bottom: 3px solid #ff4fd6;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+
+    .nav-buttons a {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      text-decoration: none;
+      background: rgba(12, 0, 32, 0.9);
+      padding: 10px 26px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      transition: 0.2s ease;
+    }
+
+    .nav-buttons a:hover {
+      background: #ff4fd6;
+      transform: translateY(-2px) scale(1.04);
+    }
+
+    .nav-buttons a.current{
+      background:#ff4fd6;
+      color:#160824;
+    }
+
+    /* PAGINA-LAY-OUT LEVEL 3 */
+    .wrap{
+      max-width:980px;
+      width:100%;
+      margin:40px auto 32px;
+      padding:0 14px 40px;
+    }
+
+    header{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(24px,3vw,32px);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .hud{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      font-size:14px;
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      background:rgba(0,0,0,.25);
+      color:var(--muted);
+    }
+
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 16px 40px rgba(0,0,0,.45);
+      padding:16px 16px 18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .toprow{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    #prompt{
+      margin:0 0 4px 0;
+      font-size:20px;
+    }
+
+    .muted{color:var(--muted);font-size:14px;}
+
+    /* Afbeelding / diagram */
+    .diagram-wrap{
+      border-radius:18px;
+      padding:10px;
+      background:
+        linear-gradient(90deg, rgba(255,82,217,.28), rgba(168,85,247,.28)) padding-box,
+        linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.06)) border-box;
+      border:2px solid transparent;
+    }
+    .diagram{
+      border-radius:14px;
+      overflow:hidden;
+      background:rgba(0,0,0,.35);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:260px;
+    }
+    .diagram img{
+      max-width:100%;
+      height:auto;
+      display:block;
+    }
+
+    /* Rij met hoofdvraag + bonusvragen */
+    .qa-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:16px;
+      align-items:flex-start;
+    }
+
+    .controls{
+      flex:1 1 260px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .music-controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      font-size:14px;
+    }
+
+    .options{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      width:100%;
+    }
+
+    .opt-main,
+    .opt-extra{
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(10,3,30,.9);
+      cursor:pointer;
+      font-weight:800;
+      text-align:center;
+      font-size:16px;
+      box-shadow:0 8px 22px rgba(0,0,0,.4);
+      transition:.15s background ease, .15s transform ease, .15s box-shadow ease;
+    }
+    .opt-main:hover,
+    .opt-extra:hover{
+      background:rgba(30,10,60,.95);
+      transform:translateY(-1px);
+      box-shadow:0 10px 26px rgba(0,0,0,.6);
+    }
+    .opt-main.selected{
+      outline:2px solid rgba(255,255,255,.6);
+    }
+    .opt-main.correct,
+    .opt-extra.correct{
+      background:rgba(34,197,94,.16);
+      border-color:var(--good);
+      box-shadow:0 0 0 1px rgba(34,197,94,.7);
+    }
+    .opt-main.wrong,
+    .opt-extra.wrong{
+      background:rgba(239,68,68,.16);
+      border-color:var(--bad);
+      box-shadow:0 0 0 1px rgba(239,68,68,.7);
+    }
+
+    .extra-block{
+      flex:1 1 260px;
+      background:rgba(10,3,30,.85);
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.18);
+      padding:10px 12px;
+    }
+
+    button{
+      appearance:none;
+      border:none;
+      border-radius:16px;
+      padding:8px 14px;
+      font-weight:800;
+      cursor:pointer;
+      background:linear-gradient(180deg,var(--accent),var(--accent2));
+      color:#160824;
+      font-size:14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      box-shadow:0 8px 20px rgba(0,0,0,.5);
+      transition:.15s transform ease,.2s filter ease;
+    }
+    button:hover{filter:brightness(1.06);}
+    button:active{transform:translateY(1px);}
+    button:disabled{
+      opacity:.55;
+      cursor:default;
+      box-shadow:none;
+    }
+
+    .feedback{
+      min-height:20px;
+      font-size:15px;
+      margin-top:4px;
+    }
+
+    .progress-dots{
+      display:flex;
+      gap:6px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .dot{
+      width:11px;
+      height:11px;
+      border-radius:50%;
+      background:#2a2347;
+      border:1px solid rgba(255,255,255,.25);
+      opacity:.8;
+    }
+    .dot.active{
+      background:linear-gradient(180deg,var(--accent),var(--accent2));
+      box-shadow:0 0 0 4px rgba(255,82,217,.4);
+      opacity:1;
+    }
+    .dot.done{
+      background:#da7df4;
+      opacity:1;
+    }
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(5,0,15,.88);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+    }
+    .endbox{
+      background:var(--panel);
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.18);
+      padding:22px 20px 18px;
+      max-width:420px;
+      text-align:center;
+      box-shadow:0 18px 46px rgba(0,0,0,.7);
+    }
+    .endbox h2{
+      margin:0 0 8px 0;
+    }
+    .endbox p{
+      margin:4px 0 10px 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .end-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+      margin-top:8px;
+    }
+  </style>
+<style id="remastered-theme">
+:root{--bg1:#05091d!important;--bg2:#19104b!important;--panel:#101a39!important;--ink:#f8fbff!important;--muted:#c9d9ff!important;--accent:#00d9ff!important;--accent2:#ab4bff!important}
+html{scroll-behavior:smooth}body{background:radial-gradient(ellipse at 50% -10%,#2d1867 0%,#080d2a 48%,#040615 100%) fixed!important;color:#f7faff!important;font-family:Inter,system-ui,Arial,sans-serif!important;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 69px,rgba(0,218,255,.035) 70px),radial-gradient(circle at 15% 30%,rgba(0,200,255,.13),transparent 30%),radial-gradient(circle at 85% 70%,rgba(183,60,255,.16),transparent 35%);animation:arenaGlow 12s ease-in-out infinite alternate}
+@keyframes arenaGlow{from{opacity:.55}to{opacity:1}}
+.nav-buttons{background:rgba(8,13,37,.92)!important;border-color:#b54dff!important;box-shadow:0 5px 25px #7222e744!important;flex-wrap:wrap;gap:8px!important}
+.nav-buttons a{background:#141a40!important;border:1px solid #5965ac66;border-radius:12px!important;padding:10px 15px!important;color:#f6f8ff!important}
+.nav-buttons a:hover,.nav-buttons a:focus-visible{background:#243e78!important;box-shadow:0 0 20px #00d9ff66;transform:translateY(-2px)}
+h1{color:#fff!important;text-shadow:0 0 20px #ae46ff88,0 0 34px #00d9ff55!important;letter-spacing:.02em!important}
+.card,.panel,.board-wrapper,.endbox{background:linear-gradient(145deg,rgba(20,34,78,.94),rgba(19,10,49,.95))!important;border:1px solid #5b8cf577!important;box-shadow:0 16px 50px #0009,0 0 25px #8548ff22!important;border-radius:22px!important}
+button,.btn,.answer-btn,.opt-main,.opt-extra{transition:transform .18s ease,filter .18s ease,box-shadow .18s ease!important}
+button:not(:disabled):hover,.btn:hover,.answer-btn:hover,.opt-main:hover,.opt-extra:hover{filter:brightness(1.16);transform:translateY(-2px);box-shadow:0 0 22px #00d9ff55!important}
+button:focus-visible,a:focus-visible{outline:3px solid #00e5ff;outline-offset:3px}
+button,.answer-btn{min-height:44px}
+.board,.diagram,.diagram-wrap{box-shadow:inset 0 0 30px #00d9ff18!important}
+.feedback{font-weight:700}
+@media(max-width:680px){.nav-buttons{padding:8px!important}.nav-buttons a{font-size:13px!important;padding:9px!important}.page,.wrap{padding-left:12px!important;padding-right:12px!important}.bottom-panel,.qa-row{gap:12px!important}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style></head>
+<body>
+
+  <!-- NAVIGATIEBALK -->
+  <div class="nav-buttons">
+    <a href="home.html">Home</a>
+    <a href="intro.html">Intro</a>
+    <a href="level1.html">Level 1</a>
+    <a href="level2.html">Level 2</a>
+    <a href="level3.html" class="current">Level 3</a>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>LEVEL 3 — Hoeksommen</h1>
+        <div class="muted">
+          Kijk naar de figuur, luister naar de muziek en kies de juiste som van de binnenhoeken.
+        </div>
+      </div>
+      <div class="hud">
+        <div class="progress-dots" id="progressDots"></div>
+        <span class="pill">Vraag <strong id="round">1</strong>/<strong id="total">0</strong></span>
+        <span class="pill">Score <strong id="score">0</strong></span>
+        <button id="resetBtn">Herstart</button>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="toprow">
+        <div>
+          <h2 id="prompt">Vraag…</h2>
+          <div class="muted">
+            Bepaal de som van de binnenhoeken van deze figuur.
+          </div>
+        </div>
+        <button id="nextBtn" disabled>Volgende vraag</button>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram">
+          <img id="shapeImg" src="" alt="Figuur">
+        </div>
+      </div>
+
+      <div class="qa-row">
+        <!-- Hoofdvraag links -->
+        <div class="controls">
+          <div class="music-controls">
+            <button id="listenBtn">🎵 Nog eens luisteren</button>
+            <button id="stopBtn">⏹ Stop muziek</button>
+            <span class="muted" id="musicLabel"></span>
+          </div>
+
+          <div class="options" id="options"></div>
+        </div>
+
+        <!-- Bonusvragen rechts -->
+        <div class="extra-block" id="extraContainer" style="display:none;">
+          <div class="muted" id="extraQuestionText"></div>
+          <div class="options" id="extraOptions"></div>
+        </div>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </section>
+  </div>
+
+  <!-- EINDSCHERM -->
+  <div class="overlay" id="endOverlay">
+    <div class="endbox">
+      <h2>Klaar met Level 3!</h2>
+      <p id="finalScore">Je score: 0/0</p>
+      <p>Wil je het nog eens spelen of terug naar het overzicht?</p>
+      <div class="end-buttons">
+        <button id="againBtn">Speel Level 3 opnieuw</button>
+        <button onclick="window.location.href='home.html'">⬅ Naar overzicht</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  /* ========= ANTWOORDLABELS ========= */
+
+  const ANSWER_TYPES = [
+    { id: "triangle",      label: "Som = 180°" },
+    { id: "quadrilateral", label: "Som = 360°" },
+    { id: "polygon",       label: "Som = (n-2).180° of aantal driehoeken.180°" }
+  ];
+
+  /* ========= VRAGEN & AUDIOKOPPELING ========= */
+
+  const QUESTIONS = [
+    // 1–3: driehoeken → som = 180° + bonus: soort driehoek
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/scherphoekige_driehoek.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/sabre_dance_level3.mp3",
+      type: "triangle",
+      correctTypes: ["triangle"],
+      extra: {
+        questions: [
+          {
+            text: "Bonusvraag: welke soort driehoek is dit?",
+            options: [
+              "scherphoekige driehoek",
+              "stomphoekige driehoek",
+              "rechthoekige driehoek"
+            ],
+            correct: "scherphoekige driehoek"
+          }
+        ]
+      }
+    },
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/stomphoekige_driehoek.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/lean_on_me_level3.mp3",
+      type: "triangle",
+      correctTypes: ["triangle"],
+      extra: {
+        questions: [
+          {
+            text: "Bonusvraag: welke soort driehoek is dit?",
+            options: [
+              "scherphoekige driehoek",
+              "stomphoekige driehoek",
+              "rechthoekige driehoek"
+            ],
+            correct: "stomphoekige driehoek"
+          }
+        ]
+      }
+    },
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/rechthoekige_driehoek.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/mars_militaire.mp3",
+      type: "triangle",
+      correctTypes: ["triangle"],
+      extra: {
+        questions: [
+          {
+            text: "Bonusvraag: welke soort driehoek is dit?",
+            options: [
+              "scherphoekige driehoek",
+              "stomphoekige driehoek",
+              "rechthoekige driehoek"
+            ],
+            correct: "rechthoekige driehoek"
+          }
+        ]
+      }
+    },
+
+    // 4–6: vierhoeken → som = 360° ÉN (n-2).180° (twee juiste antwoorden)
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/vierhoek_1.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/vierhoek_level3.mp3",
+      type: "quadrilateral",
+      correctTypes: ["quadrilateral", "polygon"]
+    },
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/vierhoek_2.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/vierhoek_level3.mp3",
+      type: "quadrilateral",
+      correctTypes: ["quadrilateral", "polygon"]
+    },
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/vierhoek_3.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/vierhoek_level3.mp3",
+      type: "quadrilateral",
+      correctTypes: ["quadrilateral", "polygon"]
+    },
+
+    // 7: veelhoek_1 – jij wil die ook als “vierhoek-achtig” behandelen → 360° EN formule
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/veelhoek_1.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/veelhoek_level3.mp3",
+      type: "quadrilateral",
+      correctTypes: ["quadrilateral", "polygon"]
+    },
+
+    // 8–10: veelhoeken → één juist antwoord + extra deelvragen
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/veelhoek_2.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/veelhoek_level3.mp3",
+      type: "polygon",
+      correctTypes: ["polygon"],
+      extra: {
+        questions: [
+          {
+            text: "Hoeveel driehoeken passen in deze veelhoek?",
+            options: ["3", "10", "14"],
+            correct: "10"
+          },
+          {
+            text: "Hoeveel graden telt deze veelhoek?",
+            options: ["540°", "1800°", "2520°"],
+            correct: "1800°"
+          }
+        ]
+      }
+    },
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/veelhoek_3.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/veelhoek_level3.mp3",
+      type: "polygon",
+      correctTypes: ["polygon"],
+      extra: {
+        questions: [
+          {
+            text: "Hoeveel driehoeken passen in deze veelhoek?",
+            options: ["3", "10", "14"],
+            correct: "3"
+          },
+          {
+            text: "Hoeveel graden telt deze veelhoek?",
+            options: ["540°", "1800°", "2520°"],
+            correct: "540°"
+          }
+        ]
+      }
+    },
+    {
+      img: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/images/veelhoek_4.png",
+      audio: "https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/veelhoek_level3.mp3",
+      type: "polygon",
+      correctTypes: ["polygon"],
+      extra: {
+        questions: [
+          {
+            text: "Hoeveel driehoeken passen in deze veelhoek?",
+            options: ["4", "5", "11"],
+            correct: "4"
+          },
+          {
+            text: "Hoeveel graden telt deze veelhoek?",
+            options: ["720°", "900°", "1980°"],
+            correct: "720°"
+          }
+        ]
+      }
+    }
+  ];
+
+  const TOTAL = QUESTIONS.length;
+
+  // totaal aantal punten (hoofdvraag = aantal juiste sommen + bonusvragen)
+  const MAX_POINTS = QUESTIONS.reduce((sum, q) => {
+    const correctTypes = q.correctTypes || [q.type];
+    const extraCount = q.extra ? q.extra.questions.length : 0;
+    return sum + correctTypes.length + extraCount;
+  }, 0);
+
+  /* ========= ELEMENTEN ========= */
+
+  const imgEl        = document.getElementById("shapeImg");
+  const promptEl     = document.getElementById("prompt");
+  const optionsEl    = document.getElementById("options");
+  const feedbackEl   = document.getElementById("feedback");
+  const scoreEl      = document.getElementById("score");
+  const roundEl      = document.getElementById("round");
+  const totalEl      = document.getElementById("total");
+  const progressDots = document.getElementById("progressDots");
+  const listenBtn    = document.getElementById("listenBtn");
+  const stopBtn      = document.getElementById("stopBtn");
+  const resetBtn     = document.getElementById("resetBtn");
+  const nextBtn      = document.getElementById("nextBtn");
+  const musicLabel   = document.getElementById("musicLabel");
+  const endOverlay   = document.getElementById("endOverlay");
+  const finalScoreEl = document.getElementById("finalScore");
+  const againBtn     = document.getElementById("againBtn");
+
+  const extraContainer  = document.getElementById("extraContainer");
+  const extraQuestionEl = document.getElementById("extraQuestionText");
+  const extraOptionsEl  = document.getElementById("extraOptions");
+
+  totalEl.textContent = TOTAL;
+
+  // voortgangstipjes
+  for(let i=0;i<TOTAL;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0 ? ' active' : '');
+    d.id = 'dot'+i;
+    progressDots.appendChild(d);
+  }
+
+  /* ========= AUDIO ========= */
+
+  let currentAudio = null;
+
+  const goodSound = new Audio("https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/reward_drumfill.mp3");
+  const badSound  = new Audio("https://raw.githubusercontent.com/Intunez/3SoundAngles3/main/audio/error_trombone_wah.mp3");
+  goodSound.preload = "auto";
+  badSound.preload  = "auto";
+
+  function stopCurrentAudio(){
+    if(currentAudio){
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+    }
+  }
+
+  function playAudioForQuestion(q){
+    stopCurrentAudio();
+    const a = new Audio(q.audio);
+    currentAudio = a;
+    a.play().catch(()=>{});
+    musicLabel.textContent = "Luister naar de muziek voor deze figuur.";
+  }
+
+  stopBtn.addEventListener('click', ()=>{
+    stopCurrentAudio();
+  });
+
+  /* ========= SPEL-STATE ========= */
+
+  let order = [];
+  let state = {
+    index: 0,
+    score: 0,
+    locked: false,
+    finished: false,
+    extraOpen: false,
+    extraIndex: 0,
+    extraTotal: 0,
+    selectedMain: []   // ids die bij de hoofdvraag aangeklikt zijn
+  };
+
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  function updateDots(){
+    for(let i=0;i<TOTAL;i++){
+      const d = document.getElementById('dot'+i);
+      d.classList.remove('active','done');
+      if(i < state.index) d.classList.add('done');
+      if(i === state.index) d.classList.add('active');
+    }
+  }
+
+  function resetGame(){
+    order = shuffle([...Array(TOTAL).keys()]);
+    state.index = 0;
+    state.score = 0;
+    state.locked = false;
+    state.finished = false;
+    state.extraOpen = false;
+    state.extraIndex = 0;
+    state.extraTotal = 0;
+    state.selectedMain = [];
+
+    scoreEl.textContent = 0;
+    roundEl.textContent = 1;
+    nextBtn.disabled = true;
+    feedbackEl.textContent = "";
+    stopCurrentAudio();
+
+    extraContainer.style.display = "none";
+    extraOptionsEl.innerHTML = "";
+    extraQuestionEl.textContent = "";
+
+    updateDots();
+    loadQuestion();
+  }
+
+  function loadQuestion(){
+    const q = QUESTIONS[order[state.index]];
+    state.current = q;
+    state.locked = false;
+    state.extraOpen = false;
+    state.extraIndex = 0;
+    state.extraTotal = q.extra ? q.extra.questions.length : 0;
+    state.selectedMain = [];
+
+    feedbackEl.textContent = "";
+    nextBtn.disabled = true;
+
+    extraContainer.style.display = "none";
+    extraOptionsEl.innerHTML = "";
+    extraQuestionEl.textContent = "";
+
+    // Tekst
+    promptEl.textContent = "Wat is de som van de hoeken van deze figuur?";
+    roundEl.textContent = state.index + 1;
+
+    // Afbeelding
+    imgEl.src = q.img;
+    imgEl.alt = "Figuur " + (state.index+1);
+
+    // Antwoordknoppen (hoofdvraag)
+    optionsEl.innerHTML = "";
+    ANSWER_TYPES.forEach(type=>{
+      const btn = document.createElement('div');
+      btn.className = 'opt-main';
+      btn.textContent = type.label;
+      btn.dataset.id = type.id;
+      btn.addEventListener('click', ()=>handleMainAnswer(type.id, btn));
+      optionsEl.appendChild(btn);
+    });
+
+    // muziek automatisch
+    playAudioForQuestion(q);
+  }
+
+  function handleMainAnswer(chosenId, btnNode){
+    if(state.locked || state.finished) return;
+
+    const q = state.current;
+    const correctIds = q.correctTypes || [q.type];
+
+    // selectie toggelen
+    const alreadySelected = state.selectedMain.includes(chosenId);
+    if(alreadySelected){
+      state.selectedMain = state.selectedMain.filter(id => id !== chosenId);
+      btnNode.classList.remove('selected');
+    } else {
+      state.selectedMain.push(chosenId);
+      btnNode.classList.add('selected');
+    }
+
+    // check of er een fout gekozen is
+    const hasWrong = state.selectedMain.some(id => !correctIds.includes(id));
+
+    if(hasWrong){
+      // fout → meteen afhandelen
+      state.locked = true;
+      stopCurrentAudio();
+
+      const all = [...document.querySelectorAll('.opt-main')];
+      all.forEach(n=>{
+        const id = n.dataset.id;
+        if(correctIds.includes(id)) n.classList.add('correct');
+        if(state.selectedMain.includes(id) && !correctIds.includes(id)){
+          n.classList.add('wrong');
+        }
+      });
+
+      let uitleg = "";
+      if(correctIds.length === 1){
+        if(correctIds[0] === "triangle"){
+          uitleg = "Correcte som is 180°.";
+        } else if(correctIds[0] === "quadrilateral"){
+          uitleg = "Correcte som is 360°.";
+        } else if(correctIds[0] === "polygon"){
+          uitleg = "Correcte som is (n-2).180° of aantal driehoeken.180°.";
+        }
+      } else {
+        // combinatie vierhoek
+        uitleg = "Je moest zowel 360° als (n-2).180° (of aantal driehoeken.180°) aanklikken.";
+      }
+
+      feedbackEl.textContent = "Niet helemaal… " + uitleg;
+      badSound.currentTime = 0;
+      badSound.play().catch(()=>{});
+
+      if(state.extraTotal > 0){
+        state.extraOpen = false;
+      }
+
+      if(state.index < TOTAL-1){
+        nextBtn.disabled = false;
+      } else {
+        setTimeout(()=>finishGame(), 1200);
+      }
+      return;
+    }
+
+    // geen fout, maar al genoeg juiste antwoorden?
+    if(state.selectedMain.length === correctIds.length){
+      state.locked = true;
+      stopCurrentAudio();
+
+      const all = [...document.querySelectorAll('.opt-main')];
+      all.forEach(n=>{
+        const id = n.dataset.id;
+        if(correctIds.includes(id)) n.classList.add('correct');
+      });
+
+      // punten = aantal juiste sommen (1 of 2)
+      state.score += correctIds.length;
+      scoreEl.textContent = state.score;
+      feedbackEl.textContent = "Goed gedaan! Je hebt alle juiste antwoorden aangeduid.";
+      goodSound.currentTime = 0;
+      goodSound.play().catch(()=>{});
+
+      // zijn er extra deelvragen?
+      if(state.extraTotal > 0){
+        state.extraOpen = true;
+        renderExtraQuestion();
+        return; // wacht met volgende vraag tot alle extra's gedaan zijn
+      }
+
+      if(state.index < TOTAL-1){
+        nextBtn.disabled = false;
+      } else {
+        setTimeout(()=>finishGame(), 1200);
+      }
+    } else {
+      // nog niet alle juiste antwoorden gekozen, geen feedback
+      feedbackEl.textContent = "Kies alle juiste antwoorden.";
+    }
+  }
+
+  function renderExtraQuestion(){
+    const q = state.current.extra.questions[state.extraIndex];
+    extraContainer.style.display = "block";
+    extraQuestionEl.textContent = q.text;
+    extraOptionsEl.innerHTML = "";
+
+    q.options.forEach(optLabel=>{
+      const btn = document.createElement('div');
+      btn.className = "opt-extra";
+      btn.textContent = optLabel;
+      btn.dataset.value = optLabel;
+      btn.addEventListener("click", ()=>handleExtraAnswer(optLabel, btn));
+      extraOptionsEl.appendChild(btn);
+    });
+  }
+
+  function handleExtraAnswer(chosenValue, btnNode){
+    if(!state.extraOpen || state.finished) return;
+
+    const q = state.current.extra.questions[state.extraIndex];
+    const correctValue = q.correct;
+
+    const all = [...document.querySelectorAll('.opt-extra')];
+    all.forEach(n=>{
+      const val = n.dataset.value;
+      const isCorrect = (val === correctValue);
+      n.classList.toggle('correct', isCorrect);
+      if(!isCorrect && n === btnNode){
+        n.classList.add('wrong');
+      }
+    });
+
+    if(chosenValue === correctValue){
+      state.score++;
+      scoreEl.textContent = state.score;
+      feedbackEl.textContent = "Goed zo! Deze bonusvraag is juist.";
+      goodSound.currentTime = 0;
+      goodSound.play().catch(()=>{});
+    } else {
+      feedbackEl.textContent = "Niet helemaal… Het juiste antwoord is: " + correctValue + ".";
+      badSound.currentTime = 0;
+      badSound.play().catch(()=>{});
+    }
+
+    // volgende extra of afronden
+    state.extraIndex++;
+
+    if(state.extraIndex < state.extraTotal){
+      setTimeout(()=>renderExtraQuestion(), 700);
+    } else {
+      state.extraOpen = false;
+      if(state.index < TOTAL-1){
+        nextBtn.disabled = false;
+      } else {
+        setTimeout(()=>finishGame(), 1200);
+      }
+    }
+  }
+
+  function finishGame(){
+    if(state.finished) return;
+    state.finished = true;
+    stopCurrentAudio();
+    finalScoreEl.textContent = "Je score: " + state.score + " / " + MAX_POINTS;
+    endOverlay.style.display = 'flex';
+  }
+
+  nextBtn.addEventListener('click', ()=>{
+    if(state.index >= TOTAL-1) return;
+    state.index++;
+    updateDots();
+    loadQuestion();
+  });
+
+  resetBtn.addEventListener('click', ()=>{
+    endOverlay.style.display = 'none';
+    resetGame();
+  });
+
+  againBtn.addEventListener('click', ()=>{
+    endOverlay.style.display = 'none';
+    resetGame();
+  });
+
+  listenBtn.addEventListener('click', ()=>{
+    if(state.current){
+      playAudioForQuestion(state.current);
+    }
+  });
+
+  // START
+  resetGame();
+</script>
+
+</body>
+</html>
