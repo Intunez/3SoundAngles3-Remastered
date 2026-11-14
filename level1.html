@@ -397,8 +397,7 @@ button,.answer-btn{min-height:44px}
 
     function handleAnswer(answer) {
       if (answered) return;
-      answered = true;
-
+      
       const q = questions[currentIndex];
       const correct = q.correct;
 
@@ -406,6 +405,7 @@ button,.answer-btn{min-height:44px}
       stopCurrentHint();
 
       if (answer === correct) {
+        answered = true;
         score++;
         feedbackText.textContent = "Goed gedaan! Dit is een " + correct + "hoek.";
         if (answer === "binnen") {
@@ -414,15 +414,17 @@ button,.answer-btn{min-height:44px}
           btnBuiten.classList.add("correct");
         }
       } else {
-        feedbackText.textContent =
-          "Niet helemaal. Dit is een " + correct + "hoek. Kijk naar de positie van de hoek tussen of buiten de twee lijnen.";
+        feedbackText.textContent = "Niet juist. Probeer opnieuw en kijk waar de hoek ligt.";
         if (answer === "binnen") {
           btnBinnen.classList.add("wrong");
+          setTimeout(() => btnBinnen.classList.remove("wrong"), 900);
         } else {
           btnBuiten.classList.add("wrong");
+          setTimeout(() => btnBuiten.classList.remove("wrong"), 900);
         }
       }
 
+      if (!answered) return;
       scoreText.textContent = "Score: " + score;
 
       if (currentIndex < questions.length - 1) {
