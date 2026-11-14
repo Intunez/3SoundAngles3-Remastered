@@ -571,18 +571,19 @@ function buildOptions(){
 
 function select(chosenType, ev){
   if(state.locked || state.finished) return;
-  state.locked = true;
+  const correctAnswer = chosenType === state.current.type;
+  if(correctAnswer) state.locked = true;
 
   const q = state.current;
   const correctType = q.type;
 
   const nodes=[...document.querySelectorAll('.opt')];
-  nodes.forEach(n => n.disabled = true);
+  if(correctAnswer) nodes.forEach(n => n.disabled = true);
   nodes.forEach(n=>{
     const typeForNode = OPTION_TYPES.find(o => o.label === n.textContent).id;
     const ok = (typeForNode === correctType);
-    n.classList.toggle('correct', ok);
-    if(!ok && n === ev.currentTarget) n.classList.add('wrong');
+    if(correctAnswer) n.classList.toggle('correct', ok);
+    if(!ok && n === ev.currentTarget){n.classList.add('wrong');setTimeout(()=>n.classList.remove('wrong'),900);}
   });
 
   stopCurrentHint(); // muziek stopt bij antwoord
@@ -607,8 +608,8 @@ function select(chosenType, ev){
   };
   let explanation=document.getElementById('remastered-explanation');
   if(!explanation){explanation=document.createElement('p');explanation.id='remastered-explanation';explanation.setAttribute('role','status');optionsEl.insertAdjacentElement('afterend',explanation);}
-  explanation.textContent=(chosenType===correctType?'Correct! ':'Bijna! ')+explanations[correctType];
-  if(state.index === TOTAL - 1){
+  explanation.textContent=correctAnswer?'Correct! '+explanations[correctType]:'Niet juist. Probeer opnieuw!';
+  if(correctAnswer && state.index === TOTAL - 1){
     setTimeout(()=>finish(), 1300);
   }
 }
