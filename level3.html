@@ -769,46 +769,18 @@ button,.answer-btn{min-height:44px}
     const hasWrong = state.selectedMain.some(id => !correctIds.includes(id));
 
     if(hasWrong){
-      // fout → meteen afhandelen
-      state.locked = true;
-      stopCurrentAudio();
-
-      const all = [...document.querySelectorAll('.opt-main')];
-      all.forEach(n=>{
-        const id = n.dataset.id;
-        if(correctIds.includes(id)) n.classList.add('correct');
-        if(state.selectedMain.includes(id) && !correctIds.includes(id)){
+      const wrongIds = state.selectedMain.filter(id => !correctIds.includes(id));
+      state.selectedMain = state.selectedMain.filter(id => correctIds.includes(id));
+      document.querySelectorAll('.opt-main').forEach(n=>{
+        if(wrongIds.includes(n.dataset.id)){
+          n.classList.remove('selected');
           n.classList.add('wrong');
+          setTimeout(()=>n.classList.remove('wrong'),900);
         }
       });
-
-      let uitleg = "";
-      if(correctIds.length === 1){
-        if(correctIds[0] === "triangle"){
-          uitleg = "Correcte som is 180°.";
-        } else if(correctIds[0] === "quadrilateral"){
-          uitleg = "Correcte som is 360°.";
-        } else if(correctIds[0] === "polygon"){
-          uitleg = "Correcte som is (n-2).180° of aantal driehoeken.180°.";
-        }
-      } else {
-        // combinatie vierhoek
-        uitleg = "Je moest zowel 360° als (n-2).180° (of aantal driehoeken.180°) aanklikken.";
-      }
-
-      feedbackEl.textContent = "Niet helemaal… " + uitleg;
+      feedbackEl.textContent = "Niet juist. Probeer opnieuw!";
       badSound.currentTime = 0;
       badSound.play().catch(()=>{});
-
-      if(state.extraTotal > 0){
-        state.extraOpen = false;
-      }
-
-      if(state.index < TOTAL-1){
-        nextBtn.disabled = false;
-      } else {
-        setTimeout(()=>finishGame(), 1200);
-      }
       return;
     }
 
@@ -872,6 +844,15 @@ button,.answer-btn{min-height:44px}
 
     const q = state.current.extra.questions[state.extraIndex];
     const correctValue = q.correct;
+
+    if(chosenValue !== correctValue){
+      btnNode.classList.add('wrong');
+      feedbackEl.textContent = "Niet juist. Probeer opnieuw!";
+      badSound.currentTime = 0;
+      badSound.play().catch(()=>{});
+      setTimeout(()=>{btnNode.classList.remove('wrong');extraAnswerPending=false;},900);
+      return;
+    }
 
     const all = [...document.querySelectorAll('.opt-extra')];
     all.forEach(n=>{
