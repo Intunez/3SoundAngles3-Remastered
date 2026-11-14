@@ -233,9 +233,12 @@ button,.answer-btn{min-height:44px}
 
       <iframe title="SoundAngles muzikale intro met originele fragmenten" src="intro-music.html" style="width:100%;aspect-ratio:16/10;border:0;border-radius:14px" allow="autoplay"></iframe>
 
-      <div class="btn-row">
-        <button id="skipButton12" class="btn-primary">
-          Ga verder naar het spel
+      <div class="btn-row" style="gap:14px;flex-wrap:wrap">
+        <button id="skipButton1" class="btn-primary">
+          Ga verder naar level 1
+        </button>
+        <button id="skipButton2" class="btn-primary">
+          Ga verder naar level 2
         </button>
       </div>
     </section>
@@ -256,17 +259,13 @@ button,.answer-btn{min-height:44px}
   </div>
 
   <script>
-    // Intro level 1 & 2
-    const video12 = document.getElementById('introVideo12');
-    const skip12  = document.getElementById('skipButton12');
-
-    video12.addEventListener('ended', () => {
-      // Na de intro: naar het overzicht
-      window.location.href = 'home.html';
+    // Na de gezamenlijke intro kiest de leerling zelf level 1 of level 2.
+    document.getElementById('skipButton1').addEventListener('click', () => {
+      window.location.href = 'level1.html?solo=1';
     });
 
-    skip12.addEventListener('click', () => {
-      window.location.href = 'home.html';
+    document.getElementById('skipButton2').addEventListener('click', () => {
+      window.location.href = 'level2.html?solo=1';
     });
 
     // Intro level 3
