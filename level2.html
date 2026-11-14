@@ -535,7 +535,9 @@ function updateDots(){
   }
 }
 
+let questionHadError = false;
 function newQuestion(){
+  questionHadError = false;
   state.locked = false;
   optionsEl.innerHTML = '';
   const oldExplanation=document.getElementById('remastered-explanation');
@@ -589,12 +591,13 @@ function select(chosenType, ev){
   stopCurrentHint(); // muziek stopt bij antwoord
 
   if(chosenType === correctType){
-    state.score++;
+    if(!questionHadError) state.score++;
     scoreEl.textContent = state.score;
     rewardAudio.currentTime = 0;
     rewardAudio.play().catch(()=>{});
     audienceApplause();
   } else {
+    questionHadError = true;
     errorAudio.currentTime = 0;
     errorAudio.play().catch(()=>{});
   }
