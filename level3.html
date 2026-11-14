@@ -710,7 +710,11 @@ button,.answer-btn{min-height:44px}
     loadQuestion();
   }
 
+  let mainHadError = false;
+  let extraHadError = false;
   function loadQuestion(){
+    mainHadError = false;
+    extraHadError = false;
     const q = QUESTIONS[order[state.index]];
     state.current = q;
     state.locked = false;
@@ -778,6 +782,7 @@ button,.answer-btn{min-height:44px}
           setTimeout(()=>n.classList.remove('wrong'),350);
         }
       });
+      mainHadError = true;
       feedbackEl.textContent = "Niet juist. Probeer opnieuw!";
       badSound.currentTime = 0;
       badSound.play().catch(()=>{});
@@ -796,7 +801,7 @@ button,.answer-btn{min-height:44px}
       });
 
       // punten = aantal juiste sommen (1 of 2)
-      state.score += correctIds.length;
+      if(!mainHadError) state.score += correctIds.length;
       scoreEl.textContent = state.score;
       feedbackEl.textContent = "Goed gedaan! Je hebt alle juiste antwoorden aangeduid.";
       goodSound.currentTime = 0;
@@ -822,6 +827,7 @@ button,.answer-btn{min-height:44px}
 
   function renderExtraQuestion(){
     extraAnswerPending = false;
+    extraHadError = false;
     const q = state.current.extra.questions[state.extraIndex];
     extraContainer.style.display = "block";
     extraQuestionEl.textContent = q.text;
@@ -847,6 +853,7 @@ button,.answer-btn{min-height:44px}
 
     if(chosenValue !== correctValue){
       btnNode.classList.add('wrong');
+      extraHadError = true;
       feedbackEl.textContent = "Niet juist. Probeer opnieuw!";
       badSound.currentTime = 0;
       badSound.play().catch(()=>{});
@@ -866,7 +873,7 @@ button,.answer-btn{min-height:44px}
     });
 
     if(chosenValue === correctValue){
-      state.score++;
+      if(!extraHadError) state.score++;
       scoreEl.textContent = state.score;
       feedbackEl.textContent = "Goed zo! Deze bonusvraag is juist.";
       goodSound.currentTime = 0;
