@@ -417,14 +417,20 @@ button,.answer-btn{min-height:44px}
         feedbackText.textContent = "Niet juist. Probeer opnieuw en kijk waar de hoek ligt.";
         if (answer === "binnen") {
           btnBinnen.classList.add("wrong");
-          setTimeout(() => btnBinnen.classList.remove("wrong"), 900);
+          setTimeout(() => btnBinnen.classList.remove("wrong"), 350);
         } else {
           btnBuiten.classList.add("wrong");
-          setTimeout(() => btnBuiten.classList.remove("wrong"), 900);
+          setTimeout(() => btnBuiten.classList.remove("wrong"), 350);
         }
       }
 
       if (!answered) return;
+      if (currentIndex < questions.length - 1) {
+        nextBtn.disabled = true;
+        finishTimer = setTimeout(() => { currentIndex++; showQuestion(currentIndex); }, 450);
+        scoreText.textContent = "Score: " + score;
+        return;
+      }
       scoreText.textContent = "Score: " + score;
 
       if (currentIndex < questions.length - 1) {
@@ -434,7 +440,7 @@ button,.answer-btn{min-height:44px}
         // Laatste vraag: knop uitzetten en automatisch naar level 2
         nextBtn.disabled = true;
         questionText.textContent += " (Laatste vraag)";
-        finishTimer = setTimeout(() => finishLevel1(), 2000);  // 2 seconden wachten
+        finishTimer = setTimeout(() => finishLevel1(), 450);  // 2 seconden wachten
       }
     }
 
