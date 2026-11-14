@@ -373,7 +373,9 @@ button,.answer-btn{min-height:44px}
     const stopMusicBtn = document.getElementById("stopMusicBtn");
     const angleNameText = document.getElementById("angleNameText");
 
+    let questionHadError = false;
     function showQuestion(index) {
+      questionHadError = false;
       const q = questions[index];
       answered = false;
       if (finishTimer) { clearTimeout(finishTimer); finishTimer = null; }
@@ -406,7 +408,7 @@ button,.answer-btn{min-height:44px}
 
       if (answer === correct) {
         answered = true;
-        score++;
+        if (!questionHadError) score++;
         feedbackText.textContent = "Goed gedaan! Dit is een " + correct + "hoek.";
         if (answer === "binnen") {
           btnBinnen.classList.add("correct");
@@ -414,6 +416,7 @@ button,.answer-btn{min-height:44px}
           btnBuiten.classList.add("correct");
         }
       } else {
+        questionHadError = true;
         feedbackText.textContent = "Niet juist. Probeer opnieuw en kijk waar de hoek ligt.";
         if (answer === "binnen") {
           btnBinnen.classList.add("wrong");
