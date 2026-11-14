@@ -775,7 +775,7 @@ button,.answer-btn{min-height:44px}
         if(wrongIds.includes(n.dataset.id)){
           n.classList.remove('selected');
           n.classList.add('wrong');
-          setTimeout(()=>n.classList.remove('wrong'),900);
+          setTimeout(()=>n.classList.remove('wrong'),350);
         }
       });
       feedbackEl.textContent = "Niet juist. Probeer opnieuw!";
@@ -805,14 +805,14 @@ button,.answer-btn{min-height:44px}
       // zijn er extra deelvragen?
       if(state.extraTotal > 0){
         state.extraOpen = true;
-        renderExtraQuestion();
+        setTimeout(()=>renderExtraQuestion(),450);
         return; // wacht met volgende vraag tot alle extra's gedaan zijn
       }
 
       if(state.index < TOTAL-1){
-        nextBtn.disabled = false;
+        setTimeout(()=>{state.index++;updateDots();loadQuestion();},450);
       } else {
-        setTimeout(()=>finishGame(), 1200);
+        setTimeout(()=>finishGame(),450);
       }
     } else {
       // nog niet alle juiste antwoorden gekozen, geen feedback
@@ -850,7 +850,7 @@ button,.answer-btn{min-height:44px}
       feedbackEl.textContent = "Niet juist. Probeer opnieuw!";
       badSound.currentTime = 0;
       badSound.play().catch(()=>{});
-      setTimeout(()=>{btnNode.classList.remove('wrong');extraAnswerPending=false;},900);
+      setTimeout(()=>{btnNode.classList.remove('wrong');extraAnswerPending=false;},350);
       return;
     }
 
@@ -881,13 +881,13 @@ button,.answer-btn{min-height:44px}
     state.extraIndex++;
 
     if(state.extraIndex < state.extraTotal){
-      setTimeout(()=>renderExtraQuestion(), 700);
+      setTimeout(()=>renderExtraQuestion(), 450);
     } else {
       state.extraOpen = false;
       if(state.index < TOTAL-1){
-        nextBtn.disabled = false;
+        setTimeout(()=>{state.index++;updateDots();loadQuestion();},450);
       } else {
-        setTimeout(()=>finishGame(), 1200);
+        setTimeout(()=>finishGame(),450);
       }
     }
   }
