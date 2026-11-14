@@ -583,7 +583,7 @@ function select(chosenType, ev){
     const typeForNode = OPTION_TYPES.find(o => o.label === n.textContent).id;
     const ok = (typeForNode === correctType);
     if(correctAnswer) n.classList.toggle('correct', ok);
-    if(!ok && n === ev.currentTarget){n.classList.add('wrong');setTimeout(()=>n.classList.remove('wrong'),900);}
+    if(!ok && n === ev.currentTarget){n.classList.add('wrong');setTimeout(()=>n.classList.remove('wrong'),350);}
   });
 
   stopCurrentHint(); // muziek stopt bij antwoord
@@ -609,8 +609,13 @@ function select(chosenType, ev){
   let explanation=document.getElementById('remastered-explanation');
   if(!explanation){explanation=document.createElement('p');explanation.id='remastered-explanation';explanation.setAttribute('role','status');optionsEl.insertAdjacentElement('afterend',explanation);}
   explanation.textContent=correctAnswer?'Correct! '+explanations[correctType]:'Niet juist. Probeer opnieuw!';
-  if(correctAnswer && state.index === TOTAL - 1){
-    setTimeout(()=>finish(), 1300);
+  if(correctAnswer){
+    setTimeout(()=>{
+      if(state.finished) return;
+      state.index++;
+      if(state.index >= TOTAL) finish();
+      else newQuestion();
+    },450);
   }
 }
 
