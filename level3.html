@@ -322,7 +322,7 @@ button,.answer-btn{min-height:44px}
         <div>
           <h2 id="prompt">…</h2>
           <div class="muted small">
-            Bekijk de aangegeven hoeken en kies het juiste antwoord.
+            Bekijk de aangegeven hoeken.
             <br />Welke soort hoeken zijn het?
           </div>
         </div>
@@ -365,9 +365,18 @@ function layoutFit(){
 }
 window.addEventListener('resize', layoutFit);
 
-/* Level 3 is volledig stil: geen muziek en geen geluidseffecten. */
+/* Geen audio in Level 3. */
 function stopCurrentHint(){}
-function playCurrentHint(){}
+/* ---------- Speaker & rook ---------- */
+const spL = document.getElementById('spLeft');
+const spR = document.getElementById('spRight');
+const audienceEl = document.querySelector('.audience');
+const smokeEl = document.getElementById('smoke');
+
+function speakerOn(){
+  spL.classList.add('glow');
+  spR.classList.add('glow');
+}
 function speakerOff(){
   spL.classList.remove('glow');
   spR.classList.remove('glow');
@@ -553,7 +562,7 @@ function select(chosenType, ev){
     if(!questionHadError) state.score++;
     scoreEl.textContent = state.score;
     
-  
+    
   } else {
     questionHadError = true;
     
@@ -579,7 +588,7 @@ function select(chosenType, ev){
   }
 }
 
-/* ---------- Hint afspelen ---------- */
+/* Geen muzikale hints in Level 3. */
 function playCurrentHint(){}
 
 /* ---------- Diagram: alleen de figuur, geen markeringen ---------- */
