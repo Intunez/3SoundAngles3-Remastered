@@ -593,10 +593,16 @@ function playCurrentHint(){}
 
 /* ---------- Diagram: alleen de figuur, geen markeringen ---------- */
 function drawDiagramPair(h1, h2){
-  // We tonen enkel de figuur; de vraag zegt welke hoeken bedoeld worden.
+  // Twee subtiele witte omtrekken duiden de gevraagde hoeken aan, zonder ze in te kleuren.
+  const positions={A1:[278,170],A2:[410,118],A3:[462,250],A4:[330,302],B1:[558,470],B2:[690,418],B3:[742,550],B4:[610,602]};
+  const rings=[h1,h2].map(id=>{
+    const pos=positions[id];
+    return pos?'<circle cx="'+pos[0]+'" cy="'+pos[1]+'" r="28" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-dasharray="7 5"/>':'';
+  }).join('');
   diagEl.innerHTML = `
-    <svg viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hoekenfiguur met twee evenwijdige lijnen en een snijlijn">
+    <svg viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hoekenfiguur: de gevraagde hoeken zijn met witte cirkels aangeduid">
       <image href="images/hoeken-soundangles.svg" x="0" y="0" width="1200" height="720" />
+      ${rings}
     </svg>
   `;
 }
